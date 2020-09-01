@@ -7,7 +7,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import uk.co.datadisk.ddrolodex.domain.security.Authority;
-import uk.co.datadisk.ddrolodex.repositories.AuthorityRepository;
+import uk.co.datadisk.ddrolodex.domain.security.Role;
+import uk.co.datadisk.ddrolodex.repositories.security.AuthorityRepository;
+import uk.co.datadisk.ddrolodex.repositories.security.RoleRepository;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -15,11 +21,12 @@ import uk.co.datadisk.ddrolodex.repositories.AuthorityRepository;
 public class bootstrap implements CommandLineRunner {
 
     private final AuthorityRepository authorityRepository;
+    private final RoleRepository roleRepository;
 
     Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         LOGGER.info("Loading data via bootstrap");
         LOGGER.info("==========================");
         loadSecurityData();
@@ -40,5 +47,15 @@ public class bootstrap implements CommandLineRunner {
         Authority contactRead = authorityRepository.save(Authority.builder().permission("contact.read").build());
         Authority contactUpdate = authorityRepository.save(Authority.builder().permission("contact.update").build());
         Authority contactDelete = authorityRepository.save(Authority.builder().permission("contact.delete").build());
+
+        Role adminRole = roleRepository.save(Role.builder().name("ADMIN").build());
+        Role managerRole = roleRepository.save(Role.builder().name("MANAGER").build());
+        Role userRole = roleRepository.save(Role.builder().name("USER").build());
+
+        adminRole.setAuthorities(new HashSet<>(Set.of(userCreate, userRead, userUpdate, userDelete)));
+        managerRole.setAuthorities(new HashSet<>(Set.of(userCreate, userRead, userUpdate, contactRead)));
+        userRole.setAuthorities(new HashSet<>(Set.of(contactCreate, contactRead, contactUpdate, contactDelete)));
+
+        roleRepository.saveAll(Arrays.asList(adminRole, managerRole, userRole));
     }
 }
