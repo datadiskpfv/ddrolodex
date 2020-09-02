@@ -28,11 +28,4 @@ public class Role extends BaseEntity {
             joinColumns = { @JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")},
             inverseJoinColumns = { @JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
     private Set<Authority> authorities;
-
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return stream(getAuthorities().toArray(String[]::new))
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-    }
-
 }
