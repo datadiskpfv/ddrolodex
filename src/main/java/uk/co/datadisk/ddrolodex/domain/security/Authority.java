@@ -9,12 +9,13 @@ import java.util.Set;
 
 @Getter
 @Setter
-@AllArgsConstructor
+@RequiredArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
 public class Authority extends BaseEntity {
 
+    @NonNull
     private String permission;
 
     @ManyToMany(mappedBy = "authorities")
