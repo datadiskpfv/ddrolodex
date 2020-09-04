@@ -45,6 +45,7 @@ class UserTest {
 
     @Test
     void getUsername() {
+        System.out.println("test");
         assertEquals("pvalle", adminUser.getUsername());
         assertEquals("manager", managerUser.getUsername());
     }

@@ -8,12 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import uk.co.datadisk.ddrolodex.domain.BaseEntity;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static java.util.Arrays.stream;
 
 @Getter
 @Setter

@@ -17,8 +17,6 @@ class AuthorityServiceTest {
 
     @Test
     void createAuthority() {
-        String permission = "user.create";
-        authorityService.createAuthority(permission);
     }
 
     @Test
