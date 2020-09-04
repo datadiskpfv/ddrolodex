@@ -10,6 +10,7 @@ import uk.co.datadisk.ddrolodex.domain.BaseEntity;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
@@ -37,10 +38,11 @@ public class User extends BaseEntity implements UserDetails, CredentialsContaine
     private boolean isActive;
     private boolean isNotLocked;
 
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return stream(role.getAuthorities().toArray(String[]::new))
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+    @Transient
+    public Set<GrantedAuthority> getAuthorities() {
+        return this.role.getAuthorities().stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.getPermission()))
+                .collect(Collectors.toSet());
     }
 
     @Override
