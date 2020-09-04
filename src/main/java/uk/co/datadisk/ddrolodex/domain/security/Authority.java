@@ -11,6 +11,7 @@ import java.util.Set;
 @Setter
 @RequiredArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Entity
 public class Authority extends BaseEntity {
@@ -18,6 +19,7 @@ public class Authority extends BaseEntity {
     @NonNull
     private String permission;
 
+    @Singular
     @ManyToMany(mappedBy = "authorities")
     public Set<Role> roles;
 }

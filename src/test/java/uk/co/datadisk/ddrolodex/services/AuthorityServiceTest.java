@@ -21,6 +21,26 @@ class AuthorityServiceTest {
         authorityService.createAuthority(permission);
     }
 
+    @Test
+    void testCreateAuthority() {
+    }
+
+    @Test
+    void findAuthorityByName() {
+    }
+
+    @Test
+    void findAll() {
+    }
+
+    @Test
+    void update() {
+    }
+
+    @Test
+    void delete() {
+    }
+
 //    @Test
 //    void findAuthorityByName() {
 //    }
