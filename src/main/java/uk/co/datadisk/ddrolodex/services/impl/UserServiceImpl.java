@@ -1,16 +1,23 @@
 package uk.co.datadisk.ddrolodex.services.impl;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import uk.co.datadisk.ddrolodex.domain.security.User;
 import uk.co.datadisk.ddrolodex.repositories.security.UserRepository;
 import uk.co.datadisk.ddrolodex.services.UserService;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @AllArgsConstructor
 @Service
-public class UserServiceImpl implements UserService {
+@Transactional
+@Qualifier("userDetailsService")
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
 
@@ -37,5 +44,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        return null;
     }
 }
