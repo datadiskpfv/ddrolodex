@@ -13,7 +13,22 @@ public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
 
     @Override
+    public Role create(Role role) {
+        return roleRepository.save(role);
+    }
+
+    @Override
     public Role findRoleByName(String name) {
         return roleRepository.findRoleByName(name).orElseThrow(() -> new RuntimeException("NO_ROLE_FOUND"));
+    }
+
+    @Override
+    public Role update(Role role) {
+        return roleRepository.save(role);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        roleRepository.deleteById(id);
     }
 }

@@ -71,7 +71,8 @@ class AuthorityServiceTest {
 
     @Test
     void delete() {
-        authorityService.delete(1L);
+        Long id = 1L;
+        authorityService.delete(id);
         verify(authorityRepository, times(1)).deleteById(anyLong());
     }
 }

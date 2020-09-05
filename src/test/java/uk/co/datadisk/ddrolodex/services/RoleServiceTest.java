@@ -2,6 +2,9 @@ package uk.co.datadisk.ddrolodex.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -14,8 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -49,23 +52,60 @@ class RoleServiceTest {
     }
 
     @Test
-    void findRoleByNameAdmin() {
-        when(roleRepository.findRoleByName("ADMIN")).thenReturn(Optional.ofNullable(adminRole));
+    void create() {
+        when(roleRepository.save(adminRole)).thenReturn(adminRole);
+        assertEquals("ADMIN", roleService.create(adminRole).getName());
+        verify(roleRepository, times(1)).save(adminRole);
+    }
 
-        assertEquals("ADMIN", roleService.findRoleByName("ADMIN").getName());
-        assertTrue(roleService.findRoleByName("ADMIN").getAuthorities().containsAll(Arrays.asList(authority1, authority2)));
+    // Below are two tests that use different ways to pass parameters
+
+    @ParameterizedTest
+    @ValueSource(strings = {"ADMIN", "MANAGER"})
+    void findRoleByName(String username) {
+
+        Role role;
+        List<Authority> authorityList;
+
+        if(username.equals("ADMIN")) {
+            role = adminRole;
+            authorityList = Arrays.asList(authority1, authority2);
+        } else {
+            role = managerRole;
+            authorityList = Arrays.asList(authority1);
+        }
+
+        when(roleRepository.findRoleByName(username)).thenReturn(Optional.ofNullable(role));
+
+        assertEquals(username, roleService.findRoleByName(username).getName());
+        assertTrue(roleService.findRoleByName(username).getAuthorities().containsAll(authorityList));
+
+        verify(roleRepository, times(2)).findRoleByName(anyString());
+    }
+
+    @ParameterizedTest(name = "#{index} with [{arguments}]")
+    @MethodSource("uk.co.datadisk.ddrolodex.services.ServiceData#getStreamFindUsers")
+    void findRole(String username, Role role, List<Authority> authorityList) {
+
+        when(roleRepository.findRoleByName(username)).thenReturn(Optional.ofNullable(role));
+
+        assertEquals(username, roleService.findRoleByName(username).getName());
+        assertTrue(roleService.findRoleByName(username).getAuthorities().containsAll(authorityList));
 
         verify(roleRepository, times(2)).findRoleByName(anyString());
     }
 
     @Test
-    void findRoleByNameManager() {
-        when(roleRepository.findRoleByName("MANAGER")).thenReturn(Optional.ofNullable(managerRole));
+    void update() {
+        when(roleRepository.save(adminRole)).thenReturn(adminRole);
+        assertEquals("ADMIN", roleService.update(adminRole).getName());
+        verify(roleRepository, times(1)).save(adminRole);
+    }
 
-        assertEquals("MANAGER", roleService.findRoleByName("MANAGER").getName());
-        assertTrue(roleService.findRoleByName("MANAGER").getAuthorities().containsAll(Arrays.asList(authority1)));
-        assertFalse(roleService.findRoleByName("MANAGER").getAuthorities().containsAll(Arrays.asList(authority2)));
-
-        verify(roleRepository, times(3)).findRoleByName(anyString());
+    @Test
+    void delete() {
+        Long id = 1L;
+        roleService.deleteById(id);
+        verify(roleRepository, times(1)).deleteById(anyLong());
     }
 }
