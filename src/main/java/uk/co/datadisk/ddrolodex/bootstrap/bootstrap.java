@@ -18,7 +18,7 @@ import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
+//@Component
 public class bootstrap implements CommandLineRunner {
 
     private final AuthorityRepository authorityRepository;

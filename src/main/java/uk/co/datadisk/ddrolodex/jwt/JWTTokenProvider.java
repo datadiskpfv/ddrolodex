@@ -38,12 +38,12 @@ public class JWTTokenProvider {
         String[] claims = getClaimsFromUser(user);
 
         return JWT.create()
-                .withIssuer(GET_ARRAYS_LLC)                    // Company Name
-                .withAudience(GET_ARRAYS_ADMINISTRATION)       // for ADMINS
-                .withIssuedAt(new Date())                      // issue date
-                .withSubject(user.getUsername())      // use username
-                .withArrayClaim(AUTHORITIES, claims)           // authorities
-                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))   // set the expiry date
+                .withIssuer(GET_DATADISK_LTD)                                               // Company Name
+                .withAudience(GET_DD_ADMINISTRATION)                                    // for ADMINS
+                .withIssuedAt(new Date())                                                   // issue date
+                .withSubject(user.getUsername())                                            // use username
+                .withArrayClaim(AUTHORITIES, claims)                                        // authorities
+                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))      // set the expiry date
                 .sign(HMAC512(secret.getBytes()));
     }
 
@@ -91,7 +91,7 @@ public class JWTTokenProvider {
 
         try {
             Algorithm algorithm = HMAC512(secret);
-            verifier = JWT.require(algorithm).withIssuer(GET_ARRAYS_LLC).build();
+            verifier = JWT.require(algorithm).withIssuer(GET_DATADISK_LTD).build();
         } catch (JWTVerificationException exception) {
             throw new JWTVerificationException(TOKEN_CANNOT_BE_VERIFIED);
         }

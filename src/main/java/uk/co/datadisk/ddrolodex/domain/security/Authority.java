@@ -1,5 +1,6 @@
 package uk.co.datadisk.ddrolodex.domain.security;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import uk.co.datadisk.ddrolodex.domain.BaseEntity;
 
@@ -20,6 +21,7 @@ public class Authority extends BaseEntity {
     private String permission;
 
     @Singular
+    @JsonBackReference
     @ManyToMany(mappedBy = "authorities")
     public Set<Role> roles;
 }

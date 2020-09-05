@@ -84,7 +84,7 @@ class RoleServiceTest {
     }
 
     @ParameterizedTest(name = "#{index} with [{arguments}]")
-    @MethodSource("uk.co.datadisk.ddrolodex.services.ServiceData#getStreamFindUsers")
+    @MethodSource("uk.co.datadisk.ddrolodex.data.ServiceData#getStreamFindUsers")
     void findRole(String username, Role role, List<Authority> authorityList) {
 
         when(roleRepository.findRoleByName(username)).thenReturn(Optional.ofNullable(role));
