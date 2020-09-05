@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.stereotype.Component;
-import uk.co.datadisk.ddportal.domain.HttpResponse;
+import uk.co.datadisk.ddrolodex.domain.HttpResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,7 +13,7 @@ import java.io.OutputStream;
 
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static uk.co.datadisk.ddportal.constants.SecurityConstant.FORBIDDEN_MESSAGE;
+import static uk.co.datadisk.ddrolodex.constants.SecurityConstant.FORBIDDEN_MESSAGE;
 
 @Component
 public class JWTAuthenticationEntryPoint extends Http403ForbiddenEntryPoint {

@@ -30,24 +30,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private JWTAccessDeniedHandler jwtAccessDeniedHandler;
     private JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private UserDetailsService userDetailsService;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     public SecurityConfig(JWTAuthorizationFilter jwtAuthorizationFilter,
                           JWTAccessDeniedHandler jwtAccessDeniedHandler,
                           JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-                          @Qualifier("userDetailsService") UserDetailsService userDetailsService,
-                          BCryptPasswordEncoder bCryptPasswordEncoder) {
+                          @Qualifier("userDetailsService") UserDetailsService userDetailsService) {
         this.jwtAuthorizationFilter = jwtAuthorizationFilter;
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.userDetailsService = userDetailsService;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
     @Override

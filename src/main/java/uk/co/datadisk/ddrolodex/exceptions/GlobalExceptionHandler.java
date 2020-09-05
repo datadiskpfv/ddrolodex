@@ -15,12 +15,9 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.NoHandlerFoundException;
-import uk.co.datadisk.ddportal.domain.HttpResponse;
-import uk.co.datadisk.ddportal.exceptions.domain.EmailNotFoundException;
-import uk.co.datadisk.ddportal.exceptions.domain.UserNotFoundException;
+import uk.co.datadisk.ddrolodex.domain.HttpResponse;
+import uk.co.datadisk.ddrolodex.exceptions.domain.*;
 
-import uk.co.datadisk.ddportal.exceptions.domain.*;
 
 import javax.persistence.NoResultException;
 
