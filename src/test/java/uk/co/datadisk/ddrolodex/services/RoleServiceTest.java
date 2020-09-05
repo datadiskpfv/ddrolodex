@@ -69,10 +69,10 @@ class RoleServiceTest {
 
         if(username.equals("ADMIN")) {
             role = adminRole;
-            authorityList = Arrays.asList(authority1, authority2);
+            authorityList = adminAuth;
         } else {
             role = managerRole;
-            authorityList = Arrays.asList(authority1);
+            authorityList = managerAuth;
         }
 
         when(roleRepository.findRoleByName(username)).thenReturn(Optional.ofNullable(role));

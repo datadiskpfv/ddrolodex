@@ -2,22 +2,31 @@ package uk.co.datadisk.ddrolodex.domain.security;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 class UserTest {
 
     User adminUser;
     User managerUser;
+
     Role adminRole;
     Set<Role> adminRoles;
     Role managerRole;
     Set<Role> managerRoles;
+
     Authority userCreate;
     Authority userDelete;
+
+    Set<GrantedAuthority> adminGrantedAuthorities;
+    Set<GrantedAuthority> managerGrantedAuthorities;
 
 
     @BeforeEach
@@ -35,6 +44,15 @@ class UserTest {
 
         adminUser = User.builder().username("pvalle").email("paul.valle@datadisk.co.uk").role(adminRole).build();
         managerUser = User.builder().username("manager").email("manager@datadisk.co.uk").role(managerRole).build();
+
+        adminGrantedAuthorities = new HashSet<>(Arrays.asList(
+                new SimpleGrantedAuthority("user.create"),
+                new SimpleGrantedAuthority("user.delete")
+        ));
+
+        managerGrantedAuthorities = new HashSet<>(Arrays.asList(
+                new SimpleGrantedAuthority("user.create")
+        ));
     }
 
     @Test
@@ -96,5 +114,17 @@ class UserTest {
 
         assertEquals("MANAGER", adminUser.getRole().getName());
         assertEquals("ADMIN", managerUser.getRole().getName());
+    }
+
+    @Test
+    void adminPermissions() {
+        assertTrue(adminUser.getAuthorities().equals(adminGrantedAuthorities));
+        assertFalse(adminUser.getAuthorities().equals(managerGrantedAuthorities));
+    }
+
+    @Test
+    void managerPermissions() {
+        assertTrue(managerUser.getAuthorities().equals(managerGrantedAuthorities));
+        assertFalse(managerUser.getAuthorities().equals(adminGrantedAuthorities));
     }
 }

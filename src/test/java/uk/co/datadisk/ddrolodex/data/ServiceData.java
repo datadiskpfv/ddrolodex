@@ -1,4 +1,4 @@
-package uk.co.datadisk.ddrolodex.services;
+package uk.co.datadisk.ddrolodex.data;
 
 import org.junit.jupiter.params.provider.Arguments;
 import uk.co.datadisk.ddrolodex.domain.security.Authority;
@@ -16,7 +16,6 @@ public class ServiceData {
 
     static List<Authority> adminAuth = new ArrayList<>(Arrays.asList(authority1, authority2));
     static List<Authority> managerAuth = new ArrayList<>(Arrays.asList(authority1));
-
 
     static Role adminRole = Role.builder().name("ADMIN").authorities(adminAuth).build();
     static Role managerRole = Role.builder().name("MANAGER").authorities(managerAuth).build();
