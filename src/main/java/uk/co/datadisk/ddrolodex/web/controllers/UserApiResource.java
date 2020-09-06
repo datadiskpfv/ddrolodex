@@ -24,6 +24,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/api/user")
+@PreAuthorize("hasAuthority('USER')")
 public class UserApiResource extends GlobalExceptionHandler {
 
     public static final String EMAIL_SENT  = "An email with a new password was sent to ";
@@ -41,7 +42,6 @@ public class UserApiResource extends GlobalExceptionHandler {
     }
 
     @GetMapping("/list")
-    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<List<User>> getAllUsers(Authentication authentication) {
         List<User> users = userService.getUsers();
         return new ResponseEntity<>(users, OK);
