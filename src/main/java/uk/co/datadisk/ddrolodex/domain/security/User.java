@@ -1,5 +1,6 @@
 package uk.co.datadisk.ddrolodex.domain.security;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +25,12 @@ public class User extends BaseEntity implements UserDetails, CredentialsContaine
     private String lastName;
     private String username;
     private String email;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(nullable = false)
     private String password;
+
+
     private Date lastLoginDate;
     private Date lastLoginDateDisplay;
     private Date joinDate;

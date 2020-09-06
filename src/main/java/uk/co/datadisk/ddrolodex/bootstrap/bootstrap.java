@@ -5,8 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import uk.co.datadisk.ddrolodex.domain.security.Authority;
 import uk.co.datadisk.ddrolodex.domain.security.Role;
 import uk.co.datadisk.ddrolodex.domain.security.User;
@@ -24,7 +23,7 @@ public class bootstrap implements CommandLineRunner {
     private final AuthorityRepository authorityRepository;
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     Logger LOGGER = LoggerFactory.getLogger(getClass());
 
@@ -74,7 +73,7 @@ public class bootstrap implements CommandLineRunner {
 
         LOGGER.info("Role: " + adminRole.getName());
 
-        String password = passwordEncoder.encode("password");
+        String password = bCryptPasswordEncoder.encode("password");
 
         User admin1 = userRepository.save(User.builder()
                 .firstName("Paul")

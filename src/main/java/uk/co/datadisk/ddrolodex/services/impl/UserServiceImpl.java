@@ -8,8 +8,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uk.co.datadisk.ddrolodex.domain.security.Role;
 import uk.co.datadisk.ddrolodex.domain.security.User;
 import uk.co.datadisk.ddrolodex.exceptions.domain.EmailExistException;
@@ -19,7 +20,7 @@ import uk.co.datadisk.ddrolodex.repositories.security.RoleRepository;
 import uk.co.datadisk.ddrolodex.repositories.security.UserRepository;
 import uk.co.datadisk.ddrolodex.services.UserService;
 
-import javax.transaction.Transactional;
+
 import java.util.Date;
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ import static uk.co.datadisk.ddrolodex.constants.UserImplConstant.*;
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RoleRepository roleRepository;
 
     @Override
@@ -43,14 +44,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<User> findUserByUsername(String username) {
         return userRepository.findUserByUsername(username);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<User> findUserByEmail(String email) {
         return userRepository.findUserByEmail(email);
     }
+
 
     @Override
     public User update(User user) {
@@ -77,7 +81,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .lastName(lastName)
                 .username(username)
                 .email(email)
-                .password(passwordEncoder.encode(password))
+                .password(bCryptPasswordEncoder.encode(password))
                 .joinDate(new Date())
                 .isActive(true)
                 .isNotLocked(true)
@@ -97,8 +101,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return null;
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findUserByUsername(username).orElse(null);
+
+        if (user == null) {
+            log.error(USER_NOT_FOUND_BY_USERNAME + username);
+            throw new UsernameNotFoundException(USER_NOT_FOUND_BY_USERNAME + username);
+        } else {
+
+            //validateLoginAttempt(user);
+
+            // update login dates and save user in db
+            user.setLastLoginDateDisplay(user.getLastLoginDate());
+            user.setLastLoginDate(new Date());
+            user.setPassword(user.getPassword());
+            userRepository.save(user);
+
+            log.info(RETURNING_FOUND_USER_BY_USERNAME + username);
+
+            return user;
+        }
     }
 
     public User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail)
@@ -136,6 +158,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return null;
         }
     }
+
+//    private void validateLoginAttempt(User user) {
+//        if(user.isNotLocked()) {
+//            if(loginAttemptService.hasExceededMaxAttempts(user.getUsername())) {
+//                user.setNotLocked(false);
+//            } else {
+//                user.setNotLocked(true);
+//            }
+//        } else {
+//            loginAttemptService.evictUserFromLoginAttemptCache(user.getUsername());
+//        }
+//    }
 
     private String generatePassword() {
         return RandomStringUtils.randomAlphanumeric(10);
