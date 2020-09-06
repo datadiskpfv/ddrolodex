@@ -6,11 +6,14 @@ import uk.co.datadisk.ddrolodex.exceptions.domain.EmailNotFoundException;
 import uk.co.datadisk.ddrolodex.exceptions.domain.RoleNotFoundException;
 import uk.co.datadisk.ddrolodex.exceptions.domain.UsernameExistException;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
 
     User create(User user);
+
+    List<User> getUsers();
 
     Optional<User> findUserByUsername(String username);
     Optional<User> findUserByEmail(String email);

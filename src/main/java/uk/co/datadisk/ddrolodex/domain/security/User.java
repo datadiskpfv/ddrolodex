@@ -43,9 +43,19 @@ public class User extends BaseEntity implements UserDetails, CredentialsContaine
 
     @Transient
     public Set<GrantedAuthority> getAuthorities() {
-        return this.role.getAuthorities().stream()
+        // I have two ways to load authorities, fine grain like user.create, user.delete, etc
+        // or a plain role ADMIN, USER from the role
+
+        // Fine grain authorities
+        Set<GrantedAuthority> authorities = this.role.getAuthorities().stream()
                 .map(authority -> new SimpleGrantedAuthority(authority.getPermission()))
                 .collect(Collectors.toSet());
+
+        // Role name authority
+        SimpleGrantedAuthority roleAuthority = new SimpleGrantedAuthority(role.getName());
+        authorities.add(roleAuthority);
+
+        return authorities;
     }
 
     @Override

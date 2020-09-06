@@ -39,7 +39,7 @@ public class JWTTokenProvider {
 
         return JWT.create()
                 .withIssuer(GET_DATADISK_LTD)                                               // Company Name
-                .withAudience(GET_DD_ADMINISTRATION)                                    // for ADMINS
+                .withAudience(GET_DD_ADMINISTRATION)                                        // for ADMINS
                 .withIssuedAt(new Date())                                                   // issue date
                 .withSubject(user.getUsername())                                            // use username
                 .withArrayClaim(AUTHORITIES, claims)                                        // authorities

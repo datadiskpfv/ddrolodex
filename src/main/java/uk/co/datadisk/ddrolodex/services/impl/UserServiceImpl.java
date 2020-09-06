@@ -5,12 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import uk.co.datadisk.ddrolodex.domain.security.Role;
 import uk.co.datadisk.ddrolodex.domain.security.User;
 import uk.co.datadisk.ddrolodex.exceptions.domain.EmailExistException;
@@ -23,6 +26,7 @@ import uk.co.datadisk.ddrolodex.services.UserService;
 
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -45,6 +49,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public List<User> getUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Optional<User> findUserByUsername(String username) {
         return userRepository.findUserByUsername(username);
@@ -55,6 +64,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public Optional<User> findUserByEmail(String email) {
         return userRepository.findUserByEmail(email);
     }
+
 
 
     @Override
