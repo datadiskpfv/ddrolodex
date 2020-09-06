@@ -1,12 +1,20 @@
 package uk.co.datadisk.ddrolodex.web.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import uk.co.datadisk.ddrolodex.domain.HttpResponse;
 import uk.co.datadisk.ddrolodex.exceptions.GlobalExceptionHandler;
+import uk.co.datadisk.ddrolodex.exceptions.domain.EmailNotFoundException;
 import uk.co.datadisk.ddrolodex.jwt.JWTTokenProvider;
 import uk.co.datadisk.ddrolodex.services.UserService;
+
+import static org.springframework.http.HttpStatus.OK;
 
 
 @RestController
@@ -78,12 +86,12 @@ public class UserApiResource extends GlobalExceptionHandler {
 //        return new ResponseEntity<>(users, OK);
 //    }
 
-//    @GetMapping("/reset-password/{email}")
-//    public ResponseEntity<HttpResponse> getAllUsers(@PathVariable("email") String email) throws EmailNotFoundException, MessagingException {
-//        System.out.println("Resetting password for " + email);
-//        userService.resetPassword(email);
-//        return response(OK, EMAIL_SENT + email);
-//    }
+    @GetMapping("/reset-password/{email}")
+    public ResponseEntity<HttpResponse> getAllUsers(@PathVariable("email") String email) throws EmailNotFoundException {
+        System.out.println("Resetting password for " + email);
+        userService.resetPassword(email);
+        return response(OK, EMAIL_SENT + email);
+    }
 
 //    @DeleteMapping("/delete/{username}")
 //    @PreAuthorize("hasAnyAuthority('user:delete')")
@@ -93,10 +101,10 @@ public class UserApiResource extends GlobalExceptionHandler {
 //    }
 
 
-//    private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
-//        return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus,
-//                httpStatus.getReasonPhrase().toUpperCase(), message), httpStatus);
-//    }
+    private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
+        return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus,
+                httpStatus.getReasonPhrase().toUpperCase(), message), httpStatus);
+    }
 
 //    private HttpHeaders createJwtHeader(UserPrincipal userPrincipal) {
 //        HttpHeaders headers = new HttpHeaders();

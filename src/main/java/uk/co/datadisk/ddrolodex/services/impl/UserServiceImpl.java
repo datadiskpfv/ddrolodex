@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.co.datadisk.ddrolodex.domain.security.Role;
 import uk.co.datadisk.ddrolodex.domain.security.User;
 import uk.co.datadisk.ddrolodex.exceptions.domain.EmailExistException;
+import uk.co.datadisk.ddrolodex.exceptions.domain.EmailNotFoundException;
 import uk.co.datadisk.ddrolodex.exceptions.domain.RoleNotFoundException;
 import uk.co.datadisk.ddrolodex.exceptions.domain.UsernameExistException;
 import uk.co.datadisk.ddrolodex.repositories.security.RoleRepository;
@@ -159,6 +160,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
     }
 
+    @Override
+    public void resetPassword(String email) throws EmailNotFoundException {
+        User user = userRepository.findUserByEmail(email).orElse(null);
+
+        if (user ==  null) {
+            throw new EmailNotFoundException(NO_USER_FOUND_BY_EMAIL + email);
+        }
+        String password = generatePassword();
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+        userRepository.save(user);
+
+        log.info("Sending email to Username: " + email + "  Password: " + password);
+
+        //emailService.sendNewPasswordEmail(user.getFirstName(), password, user.getEmail());
+    }
+
 //    private void validateLoginAttempt(User user) {
 //        if(user.isNotLocked()) {
 //            if(loginAttemptService.hasExceededMaxAttempts(user.getUsername())) {
@@ -172,6 +189,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 //    }
 
     private String generatePassword() {
-        return RandomStringUtils.randomAlphanumeric(10);
+        return "password";
+        //return RandomStringUtils.randomAlphanumeric(10);
     }
 }

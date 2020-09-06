@@ -49,7 +49,7 @@ public class IndexApiController {
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody User userLogin) throws UserNotFoundException {
         // This will throw an exception if any issues authenticating
-        //authenticate(userLogin.getUsername(), userLogin.getPassword());
+        authenticate(userLogin.getUsername(), userLogin.getPassword());
 
         User user = userService.findUserByUsername(userLogin.getUsername()).orElseThrow(() -> new UserNotFoundException(NO_USER_FOUND));
 
