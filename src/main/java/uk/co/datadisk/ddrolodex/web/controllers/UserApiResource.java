@@ -13,8 +13,6 @@ import uk.co.datadisk.ddrolodex.exceptions.domain.EmailNotFoundException;
 import uk.co.datadisk.ddrolodex.exceptions.domain.UserNotFoundException;
 import uk.co.datadisk.ddrolodex.exceptions.domain.UsernameExistException;
 import uk.co.datadisk.ddrolodex.services.UserService;
-
-import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
@@ -41,6 +39,17 @@ public class UserApiResource extends GlobalExceptionHandler {
         return new ResponseEntity<>(users, OK);
     }
 
+    @GetMapping("/find/{username}")
+    public ResponseEntity<User> findUser(@PathVariable("username") String username) {
+        User user = userService.findUserByUsername(username).orElse(null);
+
+        if (user == null) {
+            return new ResponseEntity<>(null, NO_CONTENT);
+        }
+        System.out.println("User found: " + user.getUsername());
+        return new ResponseEntity<>(user, OK);
+    }
+
     @PostMapping("/update")
     public ResponseEntity<User> updateUser(@RequestParam("currentUsername") String currentUsername,
                                         @RequestParam("firstName") String firstName,
@@ -58,15 +67,11 @@ public class UserApiResource extends GlobalExceptionHandler {
         return new ResponseEntity<>(updatedUser, OK);
     }
 
-    @GetMapping("/find/{username}")
-    public ResponseEntity<User> findUser(@PathVariable("username") String username) {
-        User user = userService.findUserByUsername(username).orElse(null);
-
-        if (user == null) {
-            return new ResponseEntity<>(null, NO_CONTENT);
-        }
-        System.out.println("User found: " + user.getUsername());
-        return new ResponseEntity<>(user, OK);
+    @DeleteMapping("/delete/{username}")
+    @PreAuthorize("hasAnyAuthority('user:delete')")
+    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("username") String username) throws EmailNotFoundException {
+        userService.deleteUser(username);
+        return response(OK, USER_DELETED_SUCCESSFULLY);
     }
 
     @GetMapping("/reset-password/{email}")
@@ -76,27 +81,8 @@ public class UserApiResource extends GlobalExceptionHandler {
         return response(OK, EMAIL_SENT + email);
     }
 
-    @DeleteMapping("/delete/{username}")
-    //@PreAuthorize("hasAnyAuthority('user:delete')")
-    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("username") String username) throws IOException, EmailNotFoundException {
-        userService.deleteUser(username);
-        return response(OK, USER_DELETED_SUCCESSFULLY);
-    }
-
-
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
         return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus,
                 httpStatus.getReasonPhrase().toUpperCase(), message), httpStatus);
     }
-
-//    private HttpHeaders createJwtHeader(UserPrincipal userPrincipal) {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add(JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(userPrincipal));
-//        return headers;
-//    }
-
-//    private void authenticate(String username, String password) {
-//        // This will throw an exception if any issues authenticating
-//        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-//    }
 }

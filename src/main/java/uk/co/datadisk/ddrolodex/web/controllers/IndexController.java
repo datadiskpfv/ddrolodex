@@ -1,34 +1,60 @@
 package uk.co.datadisk.ddrolodex.web.controllers;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import uk.co.datadisk.ddrolodex.domain.security.User;
+import uk.co.datadisk.ddrolodex.exceptions.domain.EmailExistException;
+import uk.co.datadisk.ddrolodex.exceptions.domain.RoleNotFoundException;
+import uk.co.datadisk.ddrolodex.exceptions.domain.UserNotFoundException;
+import uk.co.datadisk.ddrolodex.exceptions.domain.UsernameExistException;
+import uk.co.datadisk.ddrolodex.jwt.JWTTokenProvider;
+import uk.co.datadisk.ddrolodex.services.UserService;
+
+import static uk.co.datadisk.ddrolodex.constants.SecurityConstant.JWT_TOKEN_HEADER;
 
 @Controller
 @RequestMapping("/")
 public class IndexController {
 
-    @GetMapping("home")
-    public String showUser() {
-        return "Hello World!";
+    private final UserService userService;
+    private final JWTTokenProvider jwtTokenProvider;
+
+    public IndexController(UserService userService, JWTTokenProvider jwtTokenProvider) {
+        this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    //    @PostMapping("/register")
-//    public ResponseEntity<User> register(@RequestBody User user) throws UsernameExistException, EmailExistException {
-//        User newUser = userService.register(user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail());
-//        return new ResponseEntity<>(newUser, OK);
-//    }
+    @GetMapping("register")
+    public String register() {
+        return "register";
+    }
 
-//    @PostMapping("/login")
-//    public ResponseEntity<User> login(@RequestBody User user) {
-//        // This will throw an exception if any issues authenticating
-//        authenticate(user.getUsername(), user.getPassword());
-//
-//        User loginUser = userService.findUserByUsername(user.getUsername());
-//        UserPrincipal userPrincipal = new UserPrincipal(loginUser);
-//
-//        HttpHeaders jwtHeader = createJwtHeader(userPrincipal);
-//
-//        return new ResponseEntity<>(loginUser, jwtHeader, OK);
-//    }
+    @PostMapping("register")
+    public String RegisterUser(@RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName,
+    @RequestParam("username") String username, @RequestParam("email") String email)
+        throws UserNotFoundException, UsernameExistException, EmailExistException, RoleNotFoundException {
+        userService.register(firstName, lastName, username, email);
+        return "redirect:/login";
+    }
+
+    @GetMapping("login")
+    public String login() {
+        return "login";
+    }
+
+    @PostMapping("login")
+    public String loginPost() {
+        return "/user/user";
+    }
+
+    private HttpHeaders createJwtHeader(User user) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(user));
+        return headers;
+    }
 }

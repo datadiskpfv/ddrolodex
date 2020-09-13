@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>User Login</title>
+</head>
+<body>
+<div layout:fragment="content" class="container-fluid" style="margin-top: 20px">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+
+            <form th:action="@{/login}" method="POST">
+                <div class="panel-body">
+                    <h2 class="form-heading">User Login</h2>
+
+                    <div class="form-group ${error != null ? 'has-error' : ''}">
+                        <input name="username" type="text" class="form-control" placeholder="Username" autofocus="true"/><br />
+                        <input name="password" type="password" class="form-control" placeholder="Password"/><br />
+                        <button id="submit" class="btn btn-lg btn-success btn-block" type="submit">Log In</button>
+                    </div>
+                </div>
+            </form>
+            <div class="row">
+                <div class="col-md-3 col-md-offset-2">
+                    <a class="btn btn-sm btn-primary btn-block" th:href="@{/register}" text="register">Register</a>
+                </div>
+                <div class="col-md-3 col-md-offset-2">
+                    <a class="btn btn-sm btn-primary btn-block" th:href="@{/forgetPassword}" text="forgot password">forgot password?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

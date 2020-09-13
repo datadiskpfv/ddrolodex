@@ -19,6 +19,6 @@ public class SecurityConstant {
 
     // Use for testing purposes (no security)
     //public static final String[] PUBLIC_URLS = {"**"};
-    public static final String[] PUBLIC_URLS = {"/api/login", "/api/register"};
+    public static final String[] PUBLIC_URLS = {"/api/login", "/api/register", "/register", "/login"};
 
 }

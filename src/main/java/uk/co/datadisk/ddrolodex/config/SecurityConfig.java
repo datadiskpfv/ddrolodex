@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import uk.co.datadisk.ddrolodex.jwt.JWTTokenProvider;
 import uk.co.datadisk.ddrolodex.jwt.filters.JWTAccessDeniedHandler;
 import uk.co.datadisk.ddrolodex.jwt.filters.JWTAuthenticationEntryPoint;
 import uk.co.datadisk.ddrolodex.jwt.filters.JWTAuthorizationFilter;
@@ -30,18 +31,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private UserDetailsService userDetailsService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private JWTTokenProvider jwtTokenProvider;
 
     @Autowired
     public SecurityConfig(JWTAuthorizationFilter jwtAuthorizationFilter,
                           JWTAccessDeniedHandler jwtAccessDeniedHandler,
                           JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint,
                           @Qualifier("userDetailsService") UserDetailsService userDetailsService,
-                          BCryptPasswordEncoder bCryptPasswordEncoder) {
+                          BCryptPasswordEncoder bCryptPasswordEncoder, JWTTokenProvider jwtTokenProvider) {
         this.jwtAuthorizationFilter = jwtAuthorizationFilter;
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -60,6 +63,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(PUBLIC_URLS).permitAll()
                 .anyRequest().authenticated()
                 .and()
+                .formLogin()
+                    .loginPage("/login")
+                    .permitAll()
+                    .failureUrl("/login?error")
+                    .successHandler(successHandler())
+                .and()
+                .logout()
+                    .permitAll()
+                    .invalidateHttpSession(true)
+                    .logoutSuccessUrl("/login?logout")
+                .and()
                 .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
@@ -70,5 +84,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public RolodexSuccessHandler successHandler() {
+        return new RolodexSuccessHandler(jwtTokenProvider);
     }
 }
