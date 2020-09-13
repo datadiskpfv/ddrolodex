@@ -24,4 +24,6 @@ public interface UserService {
     User register(String firstName, String lastName, String username, String email) throws RoleNotFoundException, UsernameExistException, EmailExistException, UserNotFoundException;
 
     void resetPassword(String email) throws EmailNotFoundException;
+
+    void deleteUser(String username) throws EmailNotFoundException;
 }

@@ -193,6 +193,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         //emailService.sendNewPasswordEmail(user.getFirstName(), password, user.getEmail());
     }
 
+    @Override
+    public void deleteUser(String username) throws EmailNotFoundException {
+        User user = userRepository.findUserByUsername(username).orElse(null);
+
+        if (user ==  null) {
+            throw new EmailNotFoundException(NO_USER_FOUND_BY_USERNAME + username);
+        }
+        userRepository.deleteByUsername(username);
+    }
+
 //    private void validateLoginAttempt(User user) {
 //        if(user.isNotLocked()) {
 //            if(loginAttemptService.hasExceededMaxAttempts(user.getUsername())) {

@@ -14,6 +14,7 @@ import uk.co.datadisk.ddrolodex.exceptions.domain.UserNotFoundException;
 import uk.co.datadisk.ddrolodex.exceptions.domain.UsernameExistException;
 import uk.co.datadisk.ddrolodex.services.UserService;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
@@ -75,12 +76,12 @@ public class UserApiResource extends GlobalExceptionHandler {
         return response(OK, EMAIL_SENT + email);
     }
 
-//    @DeleteMapping("/delete/{username}")
-//    @PreAuthorize("hasAnyAuthority('user:delete')")
-//    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("username") String username) throws IOException {
-//        userService.deleteUser(username);
-//        return response(OK, USER_DELETED_SUCCESSFULLY);
-//    }
+    @DeleteMapping("/delete/{username}")
+    //@PreAuthorize("hasAnyAuthority('user:delete')")
+    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("username") String username) throws IOException, EmailNotFoundException {
+        userService.deleteUser(username);
+        return response(OK, USER_DELETED_SUCCESSFULLY);
+    }
 
 
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
