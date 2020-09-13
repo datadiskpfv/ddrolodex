@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @PreAuthorize("hasAuthority('USER')")
 public class ContactController {
 
-    @GetMapping("contacts")
+    @GetMapping("contact")
     public String contacts() {
-        return "/contact/contacts";
+        return "/contact/contact";
     }
 }

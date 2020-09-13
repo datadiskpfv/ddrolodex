@@ -22,11 +22,9 @@ import static uk.co.datadisk.ddrolodex.constants.SecurityConstant.JWT_TOKEN_HEAD
 public class IndexController {
 
     private final UserService userService;
-    private final JWTTokenProvider jwtTokenProvider;
 
-    public IndexController(UserService userService, JWTTokenProvider jwtTokenProvider) {
+    public IndexController(UserService userService) {
         this.userService = userService;
-        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @GetMapping("register")
@@ -45,16 +43,5 @@ public class IndexController {
     @GetMapping("login")
     public String login() {
         return "login";
-    }
-
-    @PostMapping("login")
-    public String loginPost() {
-        return "/user/user";
-    }
-
-    private HttpHeaders createJwtHeader(User user) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(user));
-        return headers;
     }
 }

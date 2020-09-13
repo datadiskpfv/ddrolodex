@@ -6,12 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping(path = {"/user"})
-@PreAuthorize("hasAuthority('ADMIN')")
+@RequestMapping("/user")
+//@PreAuthorize("hasAuthority('ADMIN')")
 public class UserController {
 
     @GetMapping("/user")
     public String users() {
+        System.out.println("UserController: /user/user");
         return "/user/user";
     }
 }

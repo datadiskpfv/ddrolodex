@@ -18,11 +18,6 @@ import java.io.IOException;
 public class RolodexSuccessHandler implements AuthenticationSuccessHandler {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final JWTTokenProvider jwtTokenProvider;
-
-    public RolodexSuccessHandler(JWTTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -41,15 +36,12 @@ public class RolodexSuccessHandler implements AuthenticationSuccessHandler {
             }
         }
 
-        String token = "Bearer " + jwtTokenProvider.generateJwtToken((User)authentication.getPrincipal());
-
         if(admin){
             System.out.println("User type: ADMIN");
-            response.addHeader("Authorization", token);
             response.sendRedirect("/user/user");
         }else{
             System.out.println("User type: USER");
-            response.sendRedirect("/contact/contacts");
+            response.sendRedirect("/contact/contact");
         }
     }
 }

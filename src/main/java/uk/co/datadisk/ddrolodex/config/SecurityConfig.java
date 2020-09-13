@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -18,6 +19,7 @@ import uk.co.datadisk.ddrolodex.jwt.filters.JWTAccessDeniedHandler;
 import uk.co.datadisk.ddrolodex.jwt.filters.JWTAuthenticationEntryPoint;
 import uk.co.datadisk.ddrolodex.jwt.filters.JWTAuthorizationFilter;
 
+import static org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED;
 import static uk.co.datadisk.ddrolodex.constants.SecurityConstant.PUBLIC_URLS;
 import static uk.co.datadisk.ddrolodex.constants.SecurityConstant.STATELESS;
 
@@ -56,9 +58,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .cors()
-                .and()
-                .sessionManagement().sessionCreationPolicy(STATELESS)
+                .cors().disable()
+                .sessionManagement().sessionCreationPolicy(IF_REQUIRED)
                 .and()
                 .authorizeRequests().antMatchers(PUBLIC_URLS).permitAll()
                 .anyRequest().authenticated()
@@ -88,6 +89,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public RolodexSuccessHandler successHandler() {
-        return new RolodexSuccessHandler(jwtTokenProvider);
+        return new RolodexSuccessHandler();
     }
 }
