@@ -2,28 +2,20 @@ package uk.co.datadisk.ddrolodex.services.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 import uk.co.datadisk.ddrolodex.domain.security.Role;
 import uk.co.datadisk.ddrolodex.domain.security.User;
-import uk.co.datadisk.ddrolodex.exceptions.domain.EmailExistException;
-import uk.co.datadisk.ddrolodex.exceptions.domain.EmailNotFoundException;
-import uk.co.datadisk.ddrolodex.exceptions.domain.RoleNotFoundException;
-import uk.co.datadisk.ddrolodex.exceptions.domain.UsernameExistException;
+import uk.co.datadisk.ddrolodex.exceptions.domain.*;
 import uk.co.datadisk.ddrolodex.repositories.security.RoleRepository;
 import uk.co.datadisk.ddrolodex.repositories.security.UserRepository;
 import uk.co.datadisk.ddrolodex.services.UserService;
-
 
 import java.util.Date;
 import java.util.List;
@@ -65,11 +57,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository.findUserByEmail(email);
     }
 
-
-
     @Override
-    public User update(User user) {
-        return userRepository.save(user);
+    public User updateUser(String currentUsername, String firstName, String lastName, String newUsername, String email, String role, Boolean isActive, Boolean isNonLocked) throws UsernameExistException, EmailExistException, UserNotFoundException {
+        validateNewUsernameAndEmail(currentUsername, newUsername, email);
+
+        User user = findUserByUsername(currentUsername).orElse(null);
+        Role userRole = roleRepository.findRoleByName(role).get();
+
+        if (user == null || userRole == null ) {
+            return null;
+        }
+        user.setUsername(newUsername);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+        user.setRole(userRole);
+        user.setActive(isActive);
+        user.setAccountNonLocked(isNonLocked);
+
+        userRepository.save(user);
+        return user;
     }
 
     @Override
@@ -79,7 +86,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User register(String firstName, String lastName, String username, String email)
-            throws UsernameExistException, EmailExistException, RoleNotFoundException {
+            throws UsernameExistException, EmailExistException, RoleNotFoundException, UserNotFoundException {
 
         Role userRole = roleRepository.findRoleByName("USER").orElseThrow( () -> new RoleNotFoundException(NO_ROLE_FOUND));
 
@@ -135,7 +142,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     public User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail)
-            throws UsernameNotFoundException, UsernameExistException, EmailExistException {
+            throws UsernameExistException, EmailExistException, UserNotFoundException {
 
         User userByNewUsername = findUserByUsername(newUsername).orElse(null);
         User userByNewEmail = findUserByEmail(newEmail).orElse(null);
@@ -145,7 +152,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
             // confirm that the user has a current username
             if(currentUser == null) {
-                throw new UsernameNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
+                throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
             }
 
             // Confirm new username does not exist

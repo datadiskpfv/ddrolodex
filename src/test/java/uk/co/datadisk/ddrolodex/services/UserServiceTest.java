@@ -115,24 +115,24 @@ class UserServiceTest {
         verify(userRepository, times(1)).findUserByEmail(anyString());
     }
 
-    @Test
-    void update() {
-        User updatedAdmin = User.builder()
-                .firstName("Paul")
-                .lastName("Valle")
-                .username("pvalle")
-                .email("paul.valle1@datadisk.co.uk")
-                .password("password1")
-                .lastLoginDate(new Date())
-                .lastLoginDateDisplay(new Date())
-                .joinDate(new Date())
-                .role(adminRole)
-                .build();
-
-        when(userRepository.save(admin)).thenReturn(updatedAdmin);
-        assertEquals(updatedAdmin, userService.update(admin));
-        verify(userRepository, times(1)).save(admin);
-    }
+//    @Test
+//    void update() {
+//        User updatedAdmin = User.builder()
+//                .firstName("Paul")
+//                .lastName("Valle")
+//                .username("pvalle")
+//                .email("paul.valle1@datadisk.co.uk")
+//                .password("password1")
+//                .lastLoginDate(new Date())
+//                .lastLoginDateDisplay(new Date())
+//                .joinDate(new Date())
+//                .role(adminRole)
+//                .build();
+//
+//        when(userRepository.save(admin)).thenReturn(updatedAdmin);
+//        assertEquals(updatedAdmin, userService.update(admin));
+//        verify(userRepository, times(1)).save(admin);
+//    }
 
     @Test
     void deleteById() {

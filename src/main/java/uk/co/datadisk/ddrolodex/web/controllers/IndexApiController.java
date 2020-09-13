@@ -41,7 +41,7 @@ public class IndexApiController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) throws UsernameExistException, EmailExistException, RoleNotFoundException {
+    public ResponseEntity<User> register(@RequestBody User user) throws UsernameExistException, EmailExistException, RoleNotFoundException, UserNotFoundException {
         User newUser = userService.register(user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail());
         return new ResponseEntity<>(newUser, OK);
     }
